@@ -1,60 +1,60 @@
-import React from 'react'
-import Image from 'next/image'
+"use client"
+import { Plan } from "../interface"
+import ResultAreaCom from "./ResultAreaCom"
 const ResultArea = () => {
 
-    const detailPlans=[
+    const detailPlans:Plan[]=[
         {
-            id:1,
-            plan:"静岡",
+            id:"1",
+            plan:"熱海駅到着",
             memo:"memo memo memo memo memo memo memo memo memo memo ",
-            file:"file",
-            fromTime:"2023/10/2",
-            toTime:"2023/10/2"
+            // file:"file",
+            fromTime:new Date(2023,10,30,10,10),
+            toTime:new Date(2023,10,30,11,10)
         },
         {
-            id:2,
-            plan:"静岡",
+            id:"2",
+            plan:"MOA美術館へ",
             memo:"memo memo memo memo memo memo memo memo memo memo ",
-            file:"file",
-            fromTime:"2023/10/2",
-            toTime:"2023/10/2"
+            // file:"file",
+            fromTime:new Date(2023,10,30,10,10),
+            toTime:new Date(2023,10,30,11,10)
         },
         {
-            id:3,
-            plan:"静岡",
+            id:"3",
+            plan:"熱海プリン",
             memo:"memo memo memo memo memo memo memo memo memo memo ",
-            file:"file",
-            fromTime:"2023/10/2",
-            toTime:"2023/10/2"
+            // file:"file",
+            fromTime:new Date(2023,10,31,10,10),
+            toTime:new Date(2023,10,31,11,10)
         },
         {
-            id:4,
-            plan:"静岡",
+            id:"4",
+            plan:"熱海駅出発",
             memo:"memo memo memo memo memo memo memo memo memo memo ",
-            file:"file",
-            fromTime:"2023/10/2",
-            toTime:"2023/10/2"
+            // file:"file",
+            fromTime:new Date(2023,10,31,10,10),
+            toTime:new Date(2023,10,31,11,10)
         },
     ]
 
+    const newPlan=()=>{
+        console.log("aa")
+    }
+
   return (
-    <div className=' container'>
-        {
-            detailPlans.map((detailPlan)=>
-                <div key={detailPlan.id} className='flex'>
-                    <div className='ml-3'>
-                        <p>{detailPlan.fromTime}</p>
-                        <div></div>
-                    </div>
-                    <div className=' ml-3'>
-                        <p>静岡</p>
-                        <p>持ち物：</p>
-                        <p>注意事項：</p>
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXKZe7Y6aNteMSXEh9ZymSOTtzJqn3NtrPLtgTPbiFNQ&s"/>
-                    </div>
-                </div>
-            )
-        }
+    <div className=' container h-full'>
+        <p>完成系イメージ</p>
+        <div className=' text-center'>10月30日</div>
+        <div>
+            {detailPlans.map((plan) => (
+                <ResultAreaCom key={plan.id} plan={plan} />
+            ))}
+        </div>
+        <div className=' text-center'>10月31日</div>
+        <div>
+            <button onClick={newPlan}>+</button>
+        </div>
     </div>
   )
 }
