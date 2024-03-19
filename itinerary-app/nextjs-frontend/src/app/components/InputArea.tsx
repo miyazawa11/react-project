@@ -17,11 +17,9 @@ const InputArea = ({move}) => {
         }
     ]
     const handleAddPlan= async ()=>{
-        console.log(items[0])
         AddPlan(items[0])
         const plan:Plan = await getAllplan()
         move=!move
-        console.log(plan)
     }
 
   return (

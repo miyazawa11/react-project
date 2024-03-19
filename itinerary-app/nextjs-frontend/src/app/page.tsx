@@ -1,5 +1,7 @@
 "use client"
 import React, { useState } from 'react';
+import { useDisclosure } from '@mantine/hooks';
+import { Drawer, Button } from '@mantine/core';
 import { createTheme, MantineProvider } from '@mantine/core';
 import '@mantine/core/styles.css';
 import '@/app/style.css'
@@ -9,9 +11,11 @@ import InputArea from "./components/InputArea";
 import ResultArea from "./components/ResultArea";
 import DetailArea from "./components/DetailArea";
 import NewInputArea from './components/NewInputArea';
+import { Burger } from '@mantine/core';
 import { ScrollArea } from '@mantine/core';
 
 export default function Home() {
+  const [opened, { toggle,close }] = useDisclosure();
   const [move, setMove] = useState(false);
 
     const putTogether = () => {
@@ -24,11 +28,16 @@ export default function Home() {
     <MantineProvider theme={{ components: { } }}>
     <div className=" w-screen h-screen container mx-auto">
       <div className="grid grid-cols-3 grid-rows-12 h-full">
-        <div className='flex justify-center items-center col-span-1 row-span-1'>
-          <button onClick={putTogether}>push</button>
+        <div className='flex pl-5 items-center col-span-1 row-span-1'>
+          {/* <button onClick={putTogether}>push</button> */}
+          <Burger opened={opened} onClick={toggle} aria-label="Toggle navigation" />
+          <Drawer className='' opened={opened} onClose={close} title="Authentication">
+        {/* Drawer content */}
+      </Drawer>
         </div>
         <div className=' col-span-1 row-span-1 mx-auto'>
-          <InputArea move={move}/>
+          {/* <InputArea move={move}/> */}
+            <h1 className=' text-3xl pt-4'>アプリタイトル</h1>
         </div>
         <div className="col-span-1 row-span-12 mx-auto h-ful">
           <ScrollArea style={{ height: '100%' }} scrollbarSize={3}>
