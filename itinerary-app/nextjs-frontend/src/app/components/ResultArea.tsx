@@ -1,126 +1,96 @@
 "use client"
+import { PLANDATA } from "../data"
 import { Plan } from "../interface"
 import ResultAreaCom from "./ResultAreaCom"
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-const ResultArea = () => {
+import { useState } from "react";
+import CardCom from "./CardCom";
+import ModalCard from "./ModalCard";
+import { useDisclosure } from '@mantine/hooks';
 
-    const plans = [
-        {
-          id: '1',
-          title: '北海道',
-          images: [
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-4.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-5.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-1.png',
-          ],
-          description: 'ほたて食べたい',
-          fromTime:new Date('2024-01-01'),
-            toTime:new Date('2024-01-01')
-        },
-        {
-          id: '2',
-          title: '熱海',
-          images: [
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-5.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-2.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-3.png',
-          ],
-          description: 'おさかな食堂　トロとろとろ丼',
-          fromTime:new Date(2023,10,31,10,10),
-            toTime:new Date(2023,10,31,11,10)
-        },
-        {
-          id: '3',
-          title: '山形',
-          images: [
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-6.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-5.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-9.png',
-          ],
-          description: '山形プリンたべる',
-          fromTime:new Date(2023,10,31,10,10),
-            toTime:new Date(2023,10,31,11,10)
-        },
-        {
-          id: '4',
-          title: '日光',
-          images: [
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-10.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-3.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-4.png',
-          ],
-          description: '日光東照宮から鬼怒川温泉',
-          fromTime:new Date(2023,10,31,10,10),
-            toTime:new Date(2023,10,31,11,10)
-        },
-        {
-          id: '5',
-          title: 'Norway Fjord Adventures',
-          images: [
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-8.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-6.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-5.png',
-          ],
-          description: 'With Fjord Tours you can explore more of the magical fjord landscapes with tours and activities on and around the fjords of Norway',
-          fromTime:new Date(2023,10,31,10,10),
-            toTime:new Date(2023,10,31,11,10)
-        },
-        {
-          id: '6',
-          title: 'Norway Fjord Adventures',
-          images: [
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-9.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-3.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-5.png',
-          ],
-          description: 'With Fjord Tours you can explore more of the magical fjord landscapes with tours and activities on and around the fjords of Norway',
-            fromTime:new Date(2023,10,31,10,10),
-            toTime:new Date(2023,10,31,11,10)
-        },
-        {
-          id: '7',
-          title: 'Norway Fjord Adventures',
-          images: [
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-8.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-6.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-5.png',
-          ],
-          description: 'With Fjord Tours you can explore more of the magical fjord landscapes with tours and activities on and around the fjords of Norway',
-          fromTime:new Date(2023,10,31,10,10),
-            toTime:new Date(2023,10,31,11,10)
-          
-        },
-        // 他のプランのオブジェクト...
-      ];
+interface ResultAreaProps {
+  planData: Plan[];
+  handleChangePlanData: (newPlanData: Plan[]) => void;
+}
+const ResultArea: React.FC<ResultAreaProps> = ({planData,handleChangePlanData}) => {
+  const [opened, { open, close }] = useDisclosure(false);
       const handleDragEnd =()=>{
         console.log("drop")
     }
 
-    const newPlan=()=>{
-        console.log("aa")
+    const createPlan=()=>{
+      // createPlanModalOpen()
     }
 
+  function handleOnDragEnd(result: any) {
+    const items = Array.from(planData);
+    console.log(items)
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    handleChangePlanData(items);
+    console.log(items)
+  }
+  const handleChangePlan=(newPlan:Plan)=>{
+    handleChangePlanData(planData.map((plan)=>plan.id===newPlan.id ? newPlan : plan))
+  }
+  const findLastIndexWithTrueResultArea=():string|null=> {
+    for (let i = planData.length - 1; i >= 0; i--) {
+      if ((planData[i].resultArea == true)) {
+        return planData[i].id;
+      }
+    }
+    return null;
+  }
+  const displayArrow=(id:string):boolean=>{
+    if(id===findLastIndexWithTrueResultArea()) return false
+    else return true
+  }
   return (
     <div className='container h-full'>
             <p>完成系イメージ</p>
-            <DragDropContext onDragEnd={handleDragEnd}>
-                <Droppable droppableId="selected">
+            <DragDropContext onDragEnd={handleOnDragEnd}>
+                <Droppable droppableId="planData">
                     {(provided) => (
                         <div 
                             ref={provided.innerRef} 
                             {...provided.droppableProps} 
                             className='flex flex-wrap justify-start relative w-fit mx-auto'
                         >
-                            {plans.map((plan, index) => (
+                            {planData.map((plan, index) => (
                                 <Draggable key={plan.id} draggableId={plan.id} index={index}>
                                     {(provided) => (
                                         <div
                                             ref={provided.innerRef}
                                             {...provided.draggableProps}
                                             {...provided.dragHandleProps}
-                                        
                                         >
-                                            <ResultAreaCom plan={plan} />
+                                            <div className='mt-10  border-slate-800 rounded-md w-full'>
+                                              {
+                                                  plan.resultArea ? (
+                                                    <div>
+                                                      <CardCom 
+                                                        planData={plan}
+                                                        setPlan={handleChangePlan}
+                                                        // handleRsultArea={handleRsultArea}
+                                                      />
+                                                      {
+                                                        displayArrow(plan.id) &&(
+                                                        <div className='h-10 mt-2 relative'>
+                                                        <div className='absolute top-1/2 left-1/2  border-black h-10 w-12'>
+                                                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                                                            <path d="M169.4 470.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 370.8 224 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 306.7L54.6 265.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z"/>
+                                                          </svg>
+                                                        </div>
+                                                      </div>)
+                                                      }
+                                                      
+                                                  </div>
+                                                  ):(
+                                                    <></>
+                                                  )
+                                                }
+                                          </div>
                                         </div>
                                     )}
                                 </Draggable>
@@ -132,8 +102,9 @@ const ResultArea = () => {
             </DragDropContext>
             <div className=' text-center'>新しいプランを追加</div>
             <div>
-                <button onClick={newPlan}>+</button>
+                <button onClick={open}>+</button>
             </div>
+            <ModalCard plan={null} opened={opened} open={open} close={close}/>
         </div>
   )
 }

@@ -1,109 +1,50 @@
 "use client";
-import React, { useRef, useState } from 'react';
-import { Card, Image, Text, Badge, Button, Group ,Modal} from '@mantine/core';
+import React, { useRef, useState, useEffect } from 'react';
+import { PLANDATA } from '../data';
+import '@mantine/carousel/styles.css';
+import { Card, Image, Text, Badge, Button, Group, Modal, Textarea, Input, ScrollArea, Box } from '@mantine/core';
 import { Carousel } from '@mantine/carousel';
-import CardCom from './CardCom';
-import { Textarea } from '@mantine/core';
-import { Input } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import '@mantine/carousel/styles.css'
-import { MultiSelectCreatable } from './MultiSelect';
-import { ScrollArea, Box } from '@mantine/core';
-// import Draggable from 'react-draggable';
+import { useDisclosure, useSetState } from '@mantine/hooks';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import CardCom from './CardCom';
+import EditAreaCard from './EditAreaCard';
+import { MultiSelectCreatable } from './MultiSelect';
+import { Plan } from '../interface';
+import ModalCard from './ModalCard';
 
+//型定義
+interface EditAreaProps {
+  move: boolean;
+  planData: Plan[];
+  handleChangePlanData: (newPlanData: Plan[]) => void;
+}
+const EditArea: React.FC<EditAreaProps> = ({move,planData,handleChangePlanData}) => {
+  const [opened, { open, close }] = useDisclosure(false)
 
-const EditArea = ({move}) => {
-    const [opened, { open, close }] = useDisclosure(false)
-    const plans = [
-        {
-          id: '1',
-          title: '北海道',
-          images: [
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-4.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-5.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-1.png',
-          ],
-          description: 'ほたて食べたい'
-        },
-        {
-          id: '2',
-          title: '熱海',
-          images: [
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-5.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-2.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-3.png',
-          ],
-          description: 'おさかな食堂　トロとろとろ丼'
-        },
-        {
-          id: '3',
-          title: '山形',
-          images: [
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-6.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-5.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-9.png',
-          ],
-          description: '山形プリンたべる'
-        },
-        {
-          id: '4',
-          title: '日光',
-          images: [
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-10.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-3.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-4.png',
-          ],
-          description: '日光東照宮から鬼怒川温泉'
-        },
-        {
-          id: '5',
-          title: 'Norway Fjord Adventures',
-          images: [
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-8.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-6.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-5.png',
-          ],
-          description: 'With Fjord Tours you can explore more of the magical fjord landscapes with tours and activities on and around the fjords of Norway'
-        },
-        {
-          id: '6',
-          title: 'Norway Fjord Adventures',
-          images: [
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-9.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-3.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-5.png',
-          ],
-          description: 'With Fjord Tours you can explore more of the magical fjord landscapes with tours and activities on and around the fjords of Norway'
-        },
-        {
-          id: '7',
-          title: 'Norway Fjord Adventures',
-          images: [
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-8.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-6.png',
-            'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-5.png',
-          ],
-          description: 'With Fjord Tours you can explore more of the magical fjord landscapes with tours and activities on and around the fjords of Norway'
-        },
-        // 他のプランのオブジェクト...
-      ];
-    const newPlan =()=>{
-
+  const handleOnDragEnd=(result: any)=> {
+    const items = Array.from(planData);
+    console.log(items)
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+    handleChangePlanData(items);
+    console.log(items)
+  }
+  const handleChangePlan=(newPlan:Plan)=>{
+    console.log(planData.some((plan)=>plan.id===newPlan.id))
+    if(planData.some((plan)=>plan.id===newPlan.id)){
+        planData=planData.map((plan)=>plan.id===newPlan.id ? newPlan : plan)
+        console.log(planData)
     }
-    const handleDragEnd =()=>{
-        console.log("drop")
+    else{
+        planData.push(newPlan)
     }
-    type Plan = {
-        id: string;
-        title: string;
-        images: never[] | string[];
-        description: string;
-      };
+    console.log("planData",planData)
+    handleChangePlanData(planData)
+  }
     return (
         <div className='w-full flex justify-center '>
-            <DragDropContext onDragEnd={handleDragEnd}>
-            <Droppable droppableId="selected">
+            <DragDropContext onDragEnd={handleOnDragEnd}>
+            <Droppable droppableId="planData">
                 {(provided) => (
                     <div 
                         ref={provided.innerRef} 
@@ -119,8 +60,8 @@ const EditArea = ({move}) => {
                                 </div>
                             </div>
                         </div>
-                        {plans.map((plan, index) => (
-                            <Draggable key={index.toString()} draggableId={index.toString()} index={index}>
+                        {planData.map((plan, index) => (
+                            <Draggable key={plan.id} draggableId={index.toString()} index={index}>
                                 {(provided) => (
                                     <div
                                         ref={provided.innerRef}
@@ -128,12 +69,16 @@ const EditArea = ({move}) => {
                                         {...provided.dragHandleProps}
                                         className=''
                                     >
-                                        <CardCom 
-                                            id={plan.id} 
-                                            title={plan.title} 
-                                            images={plan.images} 
-                                            description={plan.description}
+                                      {
+                                        plan.resultArea ? (
+                                            <div></div>
+                                        ):(
+                                            <CardCom 
+                                            planData={plan}
+                                            handleChangePlan={handleChangePlan}
                                         />
+                                        )
+                                        }
                                     </div>
                                 )}
                             </Draggable>
@@ -143,62 +88,7 @@ const EditArea = ({move}) => {
                 )}
             </Droppable>
         </DragDropContext>
-            {
-                opened && 
-                <Modal opened={opened} onClose={close} style={[{"width":"600px"},{"height":"800px"}]}>
-          <Card className='w-80 h-96 mx-auto bg-slate-600 '  shadow="sm" padding="lg" radius="md">
-            <Card.Section>
-              <Carousel withIndicators height={150} loop>
-              <Carousel.Slide>
-              <Image
-                src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-8.png"
-                style={[{"height":"100%"},{"objectFit":"contain"}]}
-                alt="Norway"
-              />
-              </Carousel.Slide>
-              <Carousel.Slide>
-              <Image
-                src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-6.png"
-                style={[{"height":"100%"},{"objectFit":"contain"}]}
-                alt="Norway"
-              />
-              </Carousel.Slide>
-              <Carousel.Slide>
-              <Image
-                src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-5.png"
-                style={[{"height":"100%"},{"objectFit":"contain"}]}
-                alt="Norway"
-              />
-              </Carousel.Slide>
-              {/* ...other slides */}
-          </Carousel>
-            </Card.Section>
-
-            <Group justify="start" mt="sm" mb="sm">
-              <Text fw={500}>
-              <input type="email" defaultValue={"タイトル：Norway Fjord Adventures"} className="peer py-3 px-2 block w-full bg-gray-100 border-transparent rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-gray-700 dark:border-transparent dark:text-gray-400 dark:focus:ring-gray-600" placeholder="Enter title"/>
-              </Text>
-              <ScrollArea w={300} style={{"height":"fit-content"}} scrollbarSize={5} scrollHideDelay={0} scrollbars="x">
-              <div className='w-full flex flex-nowrap overflow-auto mb-2'>
-                <MultiSelectCreatable/>
-              </div>
-              </ScrollArea>
-            </Group>
-            <ScrollArea style={{"height":"full"}} scrollbarSize={5} scrollHideDelay={0} scrollbars="y">
-            <Text size="md" c="dimmed">
-                <Textarea 
-                  defaultValue={"メモ：With Fjord Tours you can explore more of the magical fjord landscapes with tours andactivities on and around the fjords of Norway"}
-                  placeholder="Input placeholder"
-                />
-            </Text>
-            </ScrollArea>
-
-            <Button onClick={close} color="blue" fullWidth mt="md" radius="md">
-              保存
-            </Button>
-          </Card>
-          </Modal>
-            }
+        <ModalCard handleChangePlan={handleChangePlan}  plan={null} opened={opened} open={open} close={close}/>
         </div>
     );
 }

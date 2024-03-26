@@ -1,8 +1,10 @@
 export interface Plan{
     id:string;
-    plan:string;
-    memo:string;
-    // file:"file"string;
+    title:string | null;
+    images:string[] | null;
+    description:string | null;
     fromTime:Date | null;
     toTime:Date | null;
+    tags:string[]
+    resultArea:boolean;
 }

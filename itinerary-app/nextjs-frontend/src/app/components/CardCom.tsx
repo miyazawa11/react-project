@@ -14,12 +14,22 @@ import { ActionIcon, rem } from '@mantine/core';
 import { IconClock } from '@tabler/icons-react';
 import { TimeInput } from '@mantine/dates';
 import dayjs from 'dayjs';
-const CardCom = ({ id="", title="", images = [], description="" ,fromTime=new Date(),toTime=new Date()}) => {
-  function getTimeString(date:Date) {
+import { Dispatch, SetStateAction } from "react";
+import { Plan } from '../interface';
+import ModalCard from './ModalCard';
+
+interface CardComProps {
+  planData: Plan;
+  handleChangePlan: (newPlanData: Plan) => void;
+}
+const CardCom: React.FC<CardComProps> = ({planData,handleChangePlan}) => {
+  
+  function getTimeString(date:Date|null) {
+    if(date==null) return "00:00"
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
     const seconds = String(date.getSeconds()).padStart(2, '0');
-    return `${hours}:${minutes}:${seconds}`;
+    return `${hours}:${minutes}`;
   }
   
     const newDate:Date=new Date()
@@ -29,8 +39,8 @@ const CardCom = ({ id="", title="", images = [], description="" ,fromTime=new Da
     const fromRef = useRef<HTMLInputElement>(null);
     const toRef = useRef<HTMLInputElement>(null);
 
-    const newFromTime:string = getTimeString(fromTime)
-    const newToTime:string = getTimeString(toTime)
+    const newFromTime:string = getTimeString(planData.fromTime)
+    const newToTime:string = getTimeString(planData.toTime)
 
     const fromPickerControl = (
       <ActionIcon variant="subtle" color="gray" onClick={() => fromRef.current?.showPicker()}>
@@ -42,64 +52,25 @@ const CardCom = ({ id="", title="", images = [], description="" ,fromTime=new Da
         <IconClock style={{ width: rem(16), height: rem(16) }} stroke={1.5} />
       </ActionIcon>
     );
+    const transfer =()=>{
+      planData.resultArea = !planData.resultArea
+      handleChangePlan(planData)
+    }
     return (
         <>
-          <Modal opened={opened} onClose={close}>
-          <Card className=' w-72 mx-auto bg-slate-600 ' shadow="sm" padding="sm" radius="md">
-            <Card.Section>
-              <Carousel withIndicators height={150} loop>
-              {images?.map((image)=>{
-                  //return文が必要になる値理由が分からない
-                  return (
-                    <Carousel.Slide key={image}>
-                      <Image
-                        src={image}
-                        style={[{"height":"100%"},{"objectFit":"contain"}]}
-                        alt="Norway"
-                      />
-                    </Carousel.Slide>
-                  );
-                })}
-              </Carousel>
-            </Card.Section>
-
-            <Group justify="start" mt="sm" mb="sm">
-              <Text fw={500}>
-              <input type="email" defaultValue={title} className="peer py-3 px-2 block w-full bg-gray-100 border-transparent rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-gray-700 dark:border-transparent dark:text-gray-400 dark:focus:ring-gray-600" placeholder="Enter title"/>
-              </Text>
-              <ScrollArea w={300} style={{"height":"fit-content"}} scrollbarSize={5} scrollHideDelay={0} scrollbars="x">
-              <div className='w-full flex flex-nowrap overflow-auto mb-2'>
-                <MultiSelectCreatable/>
-              </div>
-              </ScrollArea>
-            </Group>
-            <ScrollArea h={10} scrollbarSize={5} scrollHideDelay={0} scrollbars="y">
-            <Text size="md" c="dimmed" h={10}>
-                <Textarea 
-                  style={{"height":"10px"}}
-                  defaultValue={"メモ：With Fjord Tours you can explore more of the magical fjord landscapes with tours andactivities on and around the fjords of Norway"}
-                  placeholder="Input placeholder"
-                />
-            </Text>
-            </ScrollArea>
-
-            <Button onClick={close} color="blue" fullWidth mt="md" radius="md">
-              保存
-            </Button>
-          </Card>
-          </Modal>
+        <ModalCard plan={planData} handleChangePlan={handleChangePlan} opened={opened} open={open} close={close} />
           <div>
-            <Card  className='w-72 m-2 bg-slate-600 cursor-pointer' id={id} shadow="sm" padding="lg" radius="md" withBorder>
+            <Card  className='w-72 m-2 bg-slate-600 cursor-pointer' id={planData.id} shadow="sm" padding="lg" radius="md" withBorder>
               <Card.Section>
               <DatesProvider  settings={{ locale: 'ja', firstDayOfWeek: 0, weekendDays: [0], timezone: 'Asia/Tokyo' }}>
               <div className='flex justify-around'>
-                <TimeInput  defaultValue={newFromTime} onChange={(event) => setFromValue(event.currentTarget.valueAsDate)} className='p-1' style={{width:"100px"}} label="" ref={fromRef} rightSection={fromPickerControl} />
+                <TimeInput  defaultValue={newFromTime} onChange={(event) => setFromValue(event.currentTarget.valueAsDate)} className='p-1 cursor-pointer' style={{width:"100px"}} label="" ref={fromRef} />
                 <span>-</span>
-                <TimeInput defaultValue={newToTime} onChange={(event) => setToFromValue(event.currentTarget.valueAsDate)} className='p-1' style={{width:"100px"}} label="" ref={toRef} rightSection={toPickerControl} />
+                <TimeInput defaultValue={newToTime} onChange={(event) => setToFromValue(event.currentTarget.valueAsDate)} className='p-1 cursor-pointer' style={{width:"100px"}} label="" ref={toRef}  />
               </div>
             </DatesProvider>
                 <Carousel withIndicators height={150} loop>
-                {images?.map((image)=>{
+                {planData.images?.map((image)=>{
                   //return文が必要になる値理由が分からない
                   return (
                     <Carousel.Slide key={image}>
@@ -115,26 +86,36 @@ const CardCom = ({ id="", title="", images = [], description="" ,fromTime=new Da
               </Card.Section>
 
               <Group justify="start" mt="sm" mb="sm">
-                <Text fw={500}>{title}</Text>
+                <Text fw={500}>{planData.title}</Text>
                 <ScrollArea w={300} style={{"height":"fit-content"}} scrollbarSize={5} scrollHideDelay={0} scrollbars="x">
                 <div className=' w-full flex flex-nowrap overflow-auto mb-2'>
-                  <Badge className='mr-2 min-w-fit' color="pink">On Sale</Badge>
-                  <Badge className='mr-2 min-w-fit' color="pink">On Sale</Badge>
-                  <Badge className='mr-2 min-w-fit' color="pink">On Sale</Badge>
-                  <Badge className='mr-2 min-w-fit' color="pink">On Sale</Badge>
-                  <Badge className='mr-2 min-w-fit' color="pink">On Sale</Badge>
-                  <Badge className='mr-2 min-w-fit' color="pink">On Sale</Badge>
+                  {
+                    planData.tags.map((tag,index)=>(
+                      <Badge key={index} className='mr-2 min-w-fit' color="pink">{tag}</Badge>
+                    ))
+                  }
                 </div>
                 </ScrollArea>
               </Group>
 
               <Text size="sm" c="dimmed" h={20} className='truncate'>
-                {description}
+                {planData.description}
               </Text>
-
+              <div className='flex'>
               <Button onClick={open} color="blue" fullWidth mt="md" radius="md">
                 編集
               </Button>
+              <Button
+                onClick={transfer}
+                color={planData.resultArea ? 'red' : 'green'}
+                fullWidth
+                mt="md"
+                radius="md"
+              >
+                {planData.resultArea ? '削除' : '追加'}
+              </Button>
+
+              </div>
             </Card>
             </div>
           
