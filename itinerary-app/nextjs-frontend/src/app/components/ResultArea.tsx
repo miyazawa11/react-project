@@ -71,7 +71,7 @@ const ResultArea: React.FC<ResultAreaProps> = ({planData,handleChangePlanData}) 
                                                     <div>
                                                       <CardCom 
                                                         planData={plan}
-                                                        setPlan={handleChangePlan}
+                                                        handleChangePlan={handleChangePlan}
                                                         // handleRsultArea={handleRsultArea}
                                                       />
                                                       {

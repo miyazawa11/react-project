@@ -22,6 +22,7 @@ export default function Home() {
   const [move, setMove] = useState(false);
   const handleChangePlanData=(newPlanData:Plan[])=>{
     setPlan(newPlanData)
+    console.log("PLANDATA",planData)
   }
   
   return (

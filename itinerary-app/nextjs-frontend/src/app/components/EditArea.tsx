@@ -30,7 +30,7 @@ const EditArea: React.FC<EditAreaProps> = ({move,planData,handleChangePlanData})
     console.log(items)
   }
   const handleChangePlan=(newPlan:Plan)=>{
-    console.log(planData.some((plan)=>plan.id===newPlan.id))
+    console.log("editarea",newPlan.images)
     if(planData.some((plan)=>plan.id===newPlan.id)){
         planData=planData.map((plan)=>plan.id===newPlan.id ? newPlan : plan)
         console.log(planData)
