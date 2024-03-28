@@ -1,5 +1,5 @@
 import React from 'react'
-import {Plan} from '@/app/interface'
+import {Plan} from '@/interface'
 const ResultEdit = () => {
     const EditPlan:Plan={
         id:"",

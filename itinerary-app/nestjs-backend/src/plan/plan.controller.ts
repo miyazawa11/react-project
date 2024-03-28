@@ -1,17 +1,32 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post,Put,Param } from '@nestjs/common';
 import { PlanService } from './plan.service';
+import { CreatePlanDto } from './dto/create-plan.dto';
 import { Plan } from './interface';
+import { Types } from 'mongoose';
 
 @Controller('plan')
 export class PlanController {
-    constructor(private readonly PlanService:PlanService){}
+    constructor(private readonly planService:PlanService){}
 
     @Get()
     findAll(){
-        return this.PlanService.findAll()
+        return this.planService.findAll()
     }
     @Post()
-    create(@Body() plan:Plan):void{
-        return this.PlanService.create(plan)
+    create(@Body() createPlan:CreatePlanDto){
+        return this.planService.create(createPlan)
     }
+    // @Get(':id')
+    // findOne(
+    //   @Param('id') id: string,
+    // ){
+    //   return this.planService.findOne(id:string)
+    // }
+    @Put(':id/update')
+      async update(
+        @Param('id') id: string, // プランのID
+        @Body() updatedPlan: CreatePlanDto, // 更新されたプランの情報
+      ) {
+        return await this.planService.update(id,updatedPlan);
+      }
 }

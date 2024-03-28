@@ -5,7 +5,7 @@ import  MultiSelect  from './MultiSelect';
 import { Textarea } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Carousel } from '@mantine/carousel';
-import { Plan } from '../interface';
+import { Plan } from '../../interface';
 import { Input } from '@mantine/core';
 import '@mantine/dropzone/styles.css';
 import { useState } from 'react';
@@ -49,10 +49,9 @@ const ModalCard:React.FC<ModalCardProps>  = ({
         title:titleValue,
         description:memoValue,
         tags:tagValue,
-        images:imageValue
+        images:imageUrls
         }
       if(plan===null){
-        console.log(imageValue)
         const defaultPlan: Plan = {
           id: uuidv4(),
           title: titleValue,
@@ -71,6 +70,9 @@ const ModalCard:React.FC<ModalCardProps>  = ({
         console.log(updatePlan)
         handleChangePlan(updatePlan)
       }
+    }
+    const onDeletePlan =(deletePlan:Plan)=>{
+      console.log(deletePlan)
     }
   return (
     <>
@@ -168,8 +170,15 @@ const ModalCard:React.FC<ModalCardProps>  = ({
               ()=>{
                 close()
                 onSavePlan(plan)
-              }} color="blue" fullWidth mt="md" radius="md">
+              }} color="blue"  mt="md" radius="md">
               保存
+            </Button>
+            <Button onClick={
+              ()=>{
+                close()
+                onDeletePlan(plan)
+              }} color="red"  mt="md" radius="md">
+              削除
             </Button>
           </Card>
           </Modal>

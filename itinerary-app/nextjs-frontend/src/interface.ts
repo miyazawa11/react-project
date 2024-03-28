@@ -8,3 +8,8 @@ export interface Plan{
     tags:string[]
     resultArea:boolean;
 }
+
+export interface UserInfo{
+    username:string,
+    password:string
+}

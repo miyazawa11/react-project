@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plan } from '../interface';
+import { Plan } from '../../interface';
 import { useState } from 'react';
 import CardCom from './CardCom';
 

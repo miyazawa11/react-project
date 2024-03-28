@@ -1,32 +1,49 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import { Drawer, Button } from '@mantine/core';
 import { createTheme, MantineProvider } from '@mantine/core';
 import '@mantine/core/styles.css';
 import '@/app/style.css'
 import Image from "next/image";
-import EditArea from "./components/EditArea"
-import InputArea from "./components/InputArea";
-import ResultArea from "./components/ResultArea";
-import DetailArea from "./components/DetailArea";
-import NewInputArea from './components/NewInputArea';
+import EditArea from "../app/components/EditArea"
+import InputArea from "../app/components/InputArea";
+import ResultArea from "../app/components/ResultArea";
+import DetailArea from "../app/components/DetailArea";
+import NewInputArea from '../app/components/NewInputArea';
 import { Burger } from '@mantine/core';
 import { ScrollArea } from '@mantine/core';
-import { PLANDATA } from './data';
-import { Plan } from './interface';
+import {getAllplan} from "@/api"
+// import { PLANDATA } from '../data';
+import { Plan } from '../interface';
 
 export default function Home() {
   const [opened, { toggle,close }] = useDisclosure();
-  const [planData, setPlan] = useState<Plan[]>(PLANDATA);
+  const [planData, setPlan] = useState<Plan[]>([]);
   const [move, setMove] = useState(false);
+  useEffect(() => {
+    const fetchPlanInfo = async () => {
+      try {
+        const planData = await getAllplan();
+        planData.map((plan)=>{
+          plan.fromTime=new Date(plan.fromTime)
+          plan.toTime=new Date(plan.toTime)
+        })
+        setPlan(planData);
+        console.log(planData)
+      } catch (error) {
+        console.error('Failed to fetch user data:', error);
+      }
+    };
+    fetchPlanInfo();
+  }, []);
   const handleChangePlanData=(newPlanData:Plan[])=>{
     setPlan(newPlanData)
     console.log("PLANDATA",planData)
   }
   
   return (
-    <MantineProvider theme={{ components: { } }}>
+
     <div className=" w-screen h-screen container mx-auto">
       <div className="grid grid-cols-3 grid-rows-12 h-full">
         <div className='flex pl-5 items-center col-span-1 row-span-1'>
@@ -49,6 +66,5 @@ export default function Home() {
       </div>
     </div>
 
-    </MantineProvider>
   );
 }

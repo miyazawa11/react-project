@@ -15,7 +15,7 @@ import { IconClock } from '@tabler/icons-react';
 import { TimeInput } from '@mantine/dates';
 import dayjs from 'dayjs';
 import { Dispatch, SetStateAction } from "react";
-import { Plan } from '../interface';
+import { Plan } from '../../interface';
 import ModalCard from './ModalCard';
 
 interface CardComProps {

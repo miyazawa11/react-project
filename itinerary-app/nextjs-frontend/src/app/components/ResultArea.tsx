@@ -1,11 +1,12 @@
 "use client"
 import { PLANDATA } from "../data"
-import { Plan } from "../interface"
+import { Plan } from "../../interface"
 import ResultAreaCom from "./ResultAreaCom"
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useState } from "react";
 import CardCom from "./CardCom";
 import ModalCard from "./ModalCard";
+import { createPlan,updatePlan } from '@/api';
 import { useDisclosure } from '@mantine/hooks';
 
 interface ResultAreaProps {
@@ -32,6 +33,7 @@ const ResultArea: React.FC<ResultAreaProps> = ({planData,handleChangePlanData}) 
     console.log(items)
   }
   const handleChangePlan=(newPlan:Plan)=>{
+    updatePlan(newPlan)
     handleChangePlanData(planData.map((plan)=>plan.id===newPlan.id ? newPlan : plan))
   }
   const findLastIndexWithTrueResultArea=():string|null=> {
@@ -67,7 +69,8 @@ const ResultArea: React.FC<ResultAreaProps> = ({planData,handleChangePlanData}) 
                                         >
                                             <div className='mt-10  border-slate-800 rounded-md w-full'>
                                               {
-                                                  plan.resultArea ? (
+                                                //三交換演算子だとエラーになる
+                                                  plan.resultArea && (
                                                     <div>
                                                       <CardCom 
                                                         planData={plan}
@@ -86,8 +89,6 @@ const ResultArea: React.FC<ResultAreaProps> = ({planData,handleChangePlanData}) 
                                                       }
                                                       
                                                   </div>
-                                                  ):(
-                                                    <></>
                                                   )
                                                 }
                                           </div>

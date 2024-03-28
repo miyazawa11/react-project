@@ -1,16 +1,22 @@
 "use client";
 import React, { useRef, useState, useEffect } from 'react';
-import { PLANDATA } from '../data';
+import { PLANDATA } from '../../data';
 import '@mantine/carousel/styles.css';
 import { Card, Image, Text, Badge, Button, Group, Modal, Textarea, Input, ScrollArea, Box } from '@mantine/core';
 import { Carousel } from '@mantine/carousel';
 import { useDisclosure, useSetState } from '@mantine/hooks';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DraggableProvided,
+    DroppableProvided,
+    DropResult,
+    Draggable,
+    Droppable,
+    DragDropContext, } from 'react-beautiful-dnd';
 import CardCom from './CardCom';
 import EditAreaCard from './EditAreaCard';
 import { MultiSelectCreatable } from './MultiSelect';
-import { Plan } from '../interface';
+import { Plan } from '../../interface';
 import ModalCard from './ModalCard';
+import { createPlan,updatePlan } from '@/api';
 
 //型定義
 interface EditAreaProps {
@@ -32,10 +38,13 @@ const EditArea: React.FC<EditAreaProps> = ({move,planData,handleChangePlanData})
   const handleChangePlan=(newPlan:Plan)=>{
     console.log("editarea",newPlan.images)
     if(planData.some((plan)=>plan.id===newPlan.id)){
+        console.log(updatePlan)
+        updatePlan(newPlan)
         planData=planData.map((plan)=>plan.id===newPlan.id ? newPlan : plan)
         console.log(planData)
     }
     else{
+        createPlan(newPlan)
         planData.push(newPlan)
     }
     console.log("planData",planData)
@@ -45,7 +54,7 @@ const EditArea: React.FC<EditAreaProps> = ({move,planData,handleChangePlanData})
         <div className='w-full flex justify-center '>
             <DragDropContext onDragEnd={handleOnDragEnd}>
             <Droppable droppableId="planData">
-                {(provided) => (
+                {(provided:DroppableProvided) => (
                     <div 
                         ref={provided.innerRef} 
                         {...provided.droppableProps} 
@@ -61,24 +70,25 @@ const EditArea: React.FC<EditAreaProps> = ({move,planData,handleChangePlanData})
                             </div>
                         </div>
                         {planData.map((plan, index) => (
-                            <Draggable key={plan.id} draggableId={index.toString()} index={index}>
-                                {(provided) => (
+                            <Draggable key={plan.id} draggableId={plan.id} index={index}>
+                                {(provided:DraggableProvided) => (
                                     <div
                                         ref={provided.innerRef}
                                         {...provided.draggableProps}
                                         {...provided.dragHandleProps}
                                         className=''
                                     >
+                                        <div>
                                       {
-                                        plan.resultArea ? (
-                                            <div></div>
-                                        ):(
+                                        //三交換演算子だとエラーなる
+                                        !plan.resultArea && (
                                             <CardCom 
                                             planData={plan}
                                             handleChangePlan={handleChangePlan}
                                         />
                                         )
                                         }
+                                        </div>
                                     </div>
                                 )}
                             </Draggable>

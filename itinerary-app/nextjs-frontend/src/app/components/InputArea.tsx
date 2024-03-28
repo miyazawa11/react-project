@@ -1,9 +1,9 @@
 'use client'
 
 import React from 'react'
-import { Plan } from '../interface'
-import { AddPlan } from '../api'
-import {getAllplan} from '../api'
+import { Plan } from '../../interface'
+import { AddPlan } from '../../api'
+import {getAllplan} from '../../api'
 const InputArea = ({move}) => {
 
     const items=[

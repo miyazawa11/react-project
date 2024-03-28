@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { CheckIcon, Combobox, Group, Pill, PillsInput, useCombobox } from '@mantine/core';
-import { TAGDATA } from '../data';
+import { TAGDATA } from '../../data';
 
 interface MultiSelectProps{
   w:number
